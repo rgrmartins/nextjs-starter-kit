@@ -1,0 +1,35 @@
+---
+title: Learn React
+author: Roger Martins
+---
+
+# This is a markdown file
+
+<Newsletter />
+
+here is a list of items:
+
+- Item one - React
+- Item two - Management States
+- Item three - Tailwind
+
+```jsx
+'use client'
+
+import { useRouter } from 'next/navigation'
+import React from 'react'
+
+const ContactButton = () => {
+  const router = useRouter()
+
+  function handleClick () {
+    router.push('/contact')
+  }
+
+  return (
+    <button onClick={handleClick}>Contact</button>
+  )
+}
+
+export default ContactButton
+```
