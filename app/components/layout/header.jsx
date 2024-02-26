@@ -2,6 +2,7 @@ import React from 'react'
 import NavLink from '../ui/NavLink'
 import ContactButton from '../ui/ContactButton'
 import ThemeButton from '../ui/ThemeButton'
+import SignInButton from '../ui/SignInButton'
 
 const Header = () => {
   return (
@@ -26,7 +27,10 @@ const Header = () => {
           <ContactButton />
         </ul>
 
-        <ThemeButton />
+        <div className="flex items-center gap-4">
+          <ThemeButton />
+          <SignInButton />
+        </div>
       </nav>
     </header>
   )

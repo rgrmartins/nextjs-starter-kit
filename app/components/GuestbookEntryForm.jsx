@@ -1,42 +1,28 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useRef, useState } from 'react'
+import { addEntry } from '../_actions'
 
 const GuestbookEntryForm = () => {
-  const router = useRouter()
-  const [isPending, startTransition] = useTransition()
-  const [isFetching, setIsFetching] = useState(false)
-  const isMutating = isPending || isFetching
+  const formRef = useRef(null)
+  const [validationError, setValidationError ] = useState(null)
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    
-    const form = e.currentTarget
-    const formData = new FormData(form)
-    const {name, message} = Object.fromEntries(formData)
-    
-    if (!name || !message) return
+  async function action(data) {
+    const result = await addEntry(data)
 
-    setIsFetching(true)
-
-    const { error } = await fetch('/api/guestbook', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name, message })
-    })
-
-    form.reset()
-    setIsFetching(false)
-    startTransition(() => router.refresh())
+    if (result?.error) {
+      setValidationError(result.error)
+    } else {
+      setValidationError(null)
+      formRef.current.reset()
+    }
   }
   
   return (
     <form
       className='flex flex-col max-w-sm text-sm gap-y-3'
-      onSubmit={handleSubmit}
+      action={action}
+      ref={formRef}
     >
       <input
         type='text'
@@ -44,15 +30,17 @@ const GuestbookEntryForm = () => {
         placeholder='Your Name'
         className='px-3 py-1 bg-transparent border rounded dark:border-gray-600'
       />
+      {validationError?.name && (<p className='text-sm text-red-400'>{validationError.name._errors.join(', ')}</p>)}
       <input
         type='text'
         name='message'
         placeholder='Your Message'
         className='px-3 py-1 bg-transparent border rounded dark:border-gray-600'
       />
+      {validationError?.message && (<p className='text-sm text-red-400'>{validationError.message._errors.join(', ')}</p>)}
       <button
         type='submit'
-        disabled={isMutating}
+        // disabled={isMutating}
         className='px-3 py-1 text-white bg-black rounded disabled:opacity-0'
       >
         Add
